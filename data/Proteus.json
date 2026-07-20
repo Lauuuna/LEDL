@@ -1,0 +1,20 @@
+{
+    "id": 88943354,
+    "name": "Proteus",
+    "author": "SpergQuos",
+    "creators": ["SpergQuos"],
+    "verifier": "imasssaya",
+    "verification": "https://www.youtube.com/watch?v=yMXc6rWhTF0",
+    "tags": ["Extreme", "Wave", "Timings"],
+    "percentToQualify": "100",
+    "points": 1.2,
+    "verifiedDate": "17.05.2024",
+    "records": [
+        {
+            "user": "NICEPEEK",
+            "link": "https://www.youtube.com/watch?v=RkT9ldOH_08",
+            "percent": 100,
+            "date": "XX.XX.XXXX"
+        }
+    ]
+}

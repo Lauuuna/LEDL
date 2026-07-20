@@ -1,0 +1,30 @@
+{
+    "name": "LEDL",
+    "discord": "https://discord.gg/uHejkaSjMr",
+    "submitRecord": {
+        "enabled": false,
+        "link": "#"
+    },
+    "colors": {
+        "light": {
+            "background": "#ffffff",
+            "on-background": "#000000",
+            "background-hover": "#eeeeee",
+            "on-background-hover": "#000000",
+            "primary": "#2e7d32",
+            "on-primary": "#ffffff",
+            "error": "#de0000",
+            "on-error": "#ffffff"
+        },
+        "dark": {
+            "background": "#1c1b1f",
+            "on-background": "#ffffff",
+            "background-hover": "#27262c",
+            "on-background-hover": "#ffffff",
+            "primary": "#1b5e20",
+            "on-primary": "#ffffff",
+            "error": "#de0000",
+            "on-error": "#ffffff"
+        }
+    }
+}
