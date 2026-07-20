@@ -1,0 +1,20 @@
+{
+    "id": 38235367,
+    "name": "Quantum Processing",
+    "author": "Riot",
+    "creators": ["Hinds, Sil3nce and Riot"],
+    "verifier": "imasssaya",
+    "verification": "https://www.youtube.com/watch?v=amBFD7TAX5w",
+    "tags": ["Extreme", "Timings"],
+    "percentToQualify": "100",
+    "points": 3,
+    "verifiedDate": "22.02.2025",
+    "records": [
+        {
+            "user": "NICEPEEK",
+            "link": "https://www.youtube.com/watch?v=RkT9ldOH_08",
+            "percent": 100,
+            "date": "XX.XX.XXXX"
+            }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "id": 10565740,
+    "name": "Bloodbath",
+    "author": "Riot",
+    "creators": ["Riot and more"],
+    "verifier": "imasssaya",
+    "verification": "https://www.youtube.com/watch?v=DaopwPVZJx8",
+    "tags": ["Extreme", "Timings", "Learning"],
+    "percentToQualify": "100",
+    "points": 1.9,
+    "verifiedDate": "XX.XX.2022",
+    "records": [
+        {
+            "user": "NICEPEEK",
+            "link": "https://www.youtube.com/watch?v=RRm2JBwGgTY&t=81s",
+            "percent": 100,
+            "date": "XX.XX.XXXX"
+        }
+    ]
+}
