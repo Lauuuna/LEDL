@@ -75,14 +75,14 @@ export default {
                                 <span class="type-label-lg username" @click="goToPlayer(record.user)">{{ record.user }} <template v-if="flags[record.user]">({{ countryToFlag(flags[record.user]) }})</template></span>
                             </td>
                             <td class="mobile">
-                                <img v-if="record.mobile" :src="\`/assets/phone-landscape\${store.dark ? '-dark' : ''}.svg\`" alt="Mobile">
+                                <img v-if="record.mobile" :src="\`assets/phone-landscape\${store.dark ? '-dark' : ''}.svg\`" alt="Mobile">
                             </td>
                             <td class="date">
                                 <p>{{ record.date }}</p>
                             </td>
                             <td class="video-link">
                                 <a :href="record.link" target="_blank">
-                                    <img :src="\`/assets/youtube\${store.dark ? '-dark' : ''}.svg\`" alt="Video">
+                                    <img :src="\`assets/youtube\${store.dark ? '-dark' : ''}.svg\`" alt="Video">
                                 </a>
                             </td>
                         </tr>
@@ -101,7 +101,7 @@ export default {
                         <h3>List Editors</h3>
                         <ol class="editors">
                             <li v-for="editor in editors">
-                                <img :src="\`/assets/\${roleIconMap[editor.role]}\${store.dark ? '-dark' : ''}.svg\`" :alt="editor.role">
+                                <img :src="\`assets/\${roleIconMap[editor.role]}\${store.dark ? '-dark' : ''}.svg\`" :alt="editor.role">
                                 <a v-if="editor.link" class="type-label-lg link" target="_blank" :href="editor.link">{{ editor.name }}</a>
                                 <p v-else>{{ editor.name }}</p>
                             </li>

@@ -2,7 +2,7 @@ import routes from './routes.js';
 
 async function loadConfig() {
     try {
-        const res = await fetch('/data/_config.json');
+        const res = await fetch('data/_config.json');
         return await res.json();
     } catch {
         return {};
