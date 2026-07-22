@@ -10,5 +10,17 @@
     "points": 1.1,
     "verifiedDate": "06.07.2026",
     "records": [
+        {
+            "user": "imasssaya",
+            "link": "https://www.youtube.com/watch?v=y5jxI5P39ag",
+            "percent": 100,
+            "date": "15.07.2026"
+        },
+        {
+            "user": "lunokot",
+            "link": "https://www.youtube.com/watch?v=5_q9mOFln3A",
+            "percent": 100,
+            "date": "29.06.2026"
+        }
     ]
 }

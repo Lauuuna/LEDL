@@ -3,12 +3,18 @@
     "name": "Me Lin A",
     "author": "n1ckxd",
     "creators": ["n1ckxd"],
-    "verifier": "imasssaya",
-    "verification": "https://www.youtube.com/watch?v=6SliDB49njU",
+    "verifier": "lunokot",
+    "verification": "https://www.youtube.com/watch?v=qbFDp4wM4_M",
     "tags": ["Extreme", "Ship"],
     "percentToQualify": "100",
     "points": 1.2,
-    "verifiedDate": "16.05.2024",
+    "verifiedDate": "06.01.2024",
     "records": [
+    {
+            "user": "imasssaya",
+            "link": "https://www.youtube.com/watch?v=6SliDB49njU",
+            "percent": 100,
+            "date": "16.05.2024"
+        }
     ]
 }

@@ -1,14 +1,20 @@
 {
     "id": 69491632,
     "name": "Crowd Control",
-    "author": "Deadlox",
-    "creators": ["Deadlox & more"],
-    "verifier": "imasssaya",
-    "verification": "https://www.youtube.com/watch?v=cWEHdf8Mg0g",
+    "author": "Deadlox & more",
+    "creators": ["Deadlox"],
+    "verifier": "lunokot",
+    "verification": "https://www.youtube.com/watch?v=AeDAsipxrr0",
     "tags": ["Extreme", "Timings"],
     "percentToQualify": "100",
     "points": 1.4,
-    "verifiedDate": "13.03.2024",
+    "verifiedDate": "10.05.2023",
     "records": [
+        {
+            "user": "imasssaya",
+            "link": "https://www.youtube.com/watch?v=cWEHdf8Mg0g",
+            "percent": 100,
+            "date": "05.08.2025"
+        }
     ]
 }

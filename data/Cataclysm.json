@@ -3,18 +3,24 @@
     "name": "Cataclysm",
     "author": "Ggb0y",
     "creators": ["Ggb0y"],
-    "verifier": "imasssaya",
-    "verification": "https://www.youtube.com/watch?v=LOHO2U_-AHE",
+    "verifier": "lunokot",
+    "verification": "https://www.youtube.com/watch?v=4Uj_9EVEglc",
     "tags": ["Extreme", "Ship", "Wave"],
     "percentToQualify": "100",
     "points": 1.2,
-    "verifiedDate": "12.04.2024",
+    "verifiedDate": "17.02.2023",
     "records": [
         {
             "user": "NICEPEEK",
             "link": "https://www.youtube.com/watch?v=RRm2JBwGgTY&t=81s",
             "percent": 100,
             "date": "XX.XX.XXXX"
+        },
+        {
+            "user": "imasssaya",
+            "link": "https://www.youtube.com/watch?v=LOHO2U_-AHE",
+            "percent": 100,
+            "date": "12.04.2024"
         }
     ]
 }

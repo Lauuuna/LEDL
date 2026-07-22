@@ -3,13 +3,18 @@
     "name": "moment",
     "author": "icedcave",
     "creators": ["icedcave"],
-    "verifier": "imasssaya",
-    "verification": "https://www.youtube.com/watch?v=FSfM8kTmqJg",
+    "verifier": "lunokot",
+    "verification": "https://www.youtube.com/watch?v=rnh5juvvfgM",
     "tags": ["Extreme", "Chokepoints", "Wave", "Ship"],
     "percentToQualify": "100",
     "points": 1.9,
-    "verifiedDate": "16.04.2025",
+    "verifiedDate": "16.09.2023",
     "records": [
-       
+       {
+            "user": "imasssaya",
+            "link": "https://www.youtube.com/watch?v=FSfM8kTmqJg",
+            "percent": 100,
+            "date": "16.04.2025"
+        }
     ]
 }

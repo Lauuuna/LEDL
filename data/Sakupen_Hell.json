@@ -1,15 +1,20 @@
 {
     "id": 23262780,
     "name": "Sakupen Hell",
-    "author": "noobas",
+    "author": "Trusta",
     "creators": ["noobas"],
     "verifier": "imasssaya",
-    "verification": "https://www.youtube.com/watch?v=z6l74Mkoxm8&list=RDz6l74Mkoxm8&start_radio=1",
+    "verification": "https://www.youtube.com/watch?v=mGnVf8tpSwQ",
     "tags": ["Extreme", "Wave", "Chokepoints", "Fast-Paced"],
     "percentToQualify": "100",
     "points": 2.4,
     "verifiedDate": "13.03.2024",
     "records": [
-    
+    {
+            "user": "lunokot",
+            "link": "https://www.youtube.com/watch?v=0gdcuJNVRrg",
+            "percent": 100,
+            "date": "23.02.2025"
+        }
     ]
 }

@@ -3,12 +3,18 @@
     "name": "Arctic Lights",
     "author": "Metalface221",
     "creators": ["Metalface221"],
-    "verifier": "imasssaya",
-    "verification": "https://www.youtube.com/watch?v=aGqpA1LMvrw",
+    "verifier": "lunokot",
+    "verification": "https://www.youtube.com/watch?v=U4FI-uO92E8",
     "tags": ["Extreme", "Wave", "Timings", "Chokepoints"],
     "percentToQualify": "100",
     "points": 10,
-    "verifiedDate": "13.04.2025",
+    "verifiedDate": "04.12.2024",
     "records": [
+    {
+            "user": "imasssaya",
+            "link": "https://www.youtube.com/watch?v=aGqpA1LMvrw",
+            "percent": 100,
+            "date": "13.04.2025"
+        }
     ]
 }
