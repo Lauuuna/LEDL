@@ -10,5 +10,11 @@
     "points": 5.1,
     "verifiedDate": "XX.07.2025",
     "records": [
+                {
+            "user": "Tami",
+            "link": "https://www.youtube.com/watch?v=NHM0shbQSeQ",
+            "percent": 100,
+            "date": "XX.XX.XXXX"
+        }
     ]
 }

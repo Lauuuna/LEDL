@@ -9,6 +9,12 @@
     "percentToQualify": "100",
     "points": 12,
     "verifiedDate": "08.12.2024",
-    "records": [
+    "records": [   
+             {
+            "user": "Tami",
+            "link": "https://www.youtube.com/watch?v=PDV_1FEdb3g",
+            "percent": 100,
+            "date": "XX.XX.XXXX"
+        }
     ]
 }
