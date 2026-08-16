@@ -9,6 +9,12 @@
     "percentToQualify": "100",
     "points": 0.7,
     "verifiedDate": "07.12.2024",
-    "records": [
+    "records": [     
+           {
+            "user": "NICEPEEK",
+            "link": "",
+            "percent": 100,
+            "date": "XX.XX.XXXX"
+            }
     ]
 }
