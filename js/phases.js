@@ -1,37 +1,38 @@
 /**
  * Phase color ramp, from tender (phase 1) to black (phase 30).
- * A soft rose hue that darkens gradually, one color per phase.
+ * Soft rose that sharpens into crimson/wine before falling to black,
+ * one clearly distinguishable color per phase.
  */
 const PHASE_COLORS = [
-    '#ecd0d5',
-    '#e7c6cc',
-    '#e1bcc3',
-    '#dcb2ba',
-    '#d6a8b1',
-    '#d09fa9',
-    '#ca96a0',
-    '#c48d98',
-    '#bd848f',
-    '#b77b87',
-    '#b0737f',
-    '#a86b77',
-    '#a16370',
-    '#975e69',
-    '#8c5a64',
-    '#81555e',
-    '#765158',
-    '#6c4c52',
-    '#62474c',
-    '#584146',
-    '#4e3c3f',
-    '#443639',
-    '#3b3032',
-    '#322a2c',
-    '#292325',
-    '#201d1e',
-    '#181616',
-    '#100f0f',
-    '#080808',
+    '#f2b7c1',
+    '#efadb9',
+    '#eca3b1',
+    '#e999a9',
+    '#e68fa1',
+    '#e28599',
+    '#df7b91',
+    '#d8728a',
+    '#d06982',
+    '#c95f7b',
+    '#c25673',
+    '#bb4d6c',
+    '#b34564',
+    '#a93e5e',
+    '#9f3857',
+    '#943250',
+    '#8a2c49',
+    '#802543',
+    '#76213d',
+    '#6d1e37',
+    '#631a31',
+    '#5a172c',
+    '#501426',
+    '#471120',
+    '#3b0e1b',
+    '#300b15',
+    '#240810',
+    '#18060b',
+    '#0c0305',
     '#000000',
 ];
 
@@ -53,13 +54,21 @@ function luminance(hex) {
     return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
 }
 
+function contrastRatio(a, b) {
+    const la = luminance(a);
+    const lb = luminance(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
 /**
- * Background and readable text color for a phase.
+ * Background and highest-contrast readable text color for a phase.
  */
 export function phaseStyles(phase) {
     const color = phaseColor(phase);
+    const onWhite = contrastRatio('#ffffff', color);
+    const onBlack = contrastRatio('#000000', color);
     return {
         backgroundColor: color,
-        color: luminance(color) > 0.4 ? '#000000' : '#ffffff',
+        color: onWhite > onBlack ? '#ffffff' : '#000000',
     };
 }

@@ -58,10 +58,6 @@ export default {
                             <p>{{ localize(level.score) }}</p>
                         </li>
                         <li>
-                            <div class="type-title-sm">Phase</div>
-                            <p>{{ level.phase }}</p>
-                        </li>
-                        <li>
                             <div class="type-title-sm">ID</div>
                             <p>{{ level.id }}</p>
                         </li>
