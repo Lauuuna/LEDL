@@ -1,15 +1,55 @@
-import { round, manualPointsScore } from './score.js';
+import {
+    round,
+    normalizeScoring,
+    levelScore,
+    percentPointsScore,
+    playerTotalScore,
+} from './score.js';
 
 /**
  * Path to directory containing `_list.json` and all levels
  */
 const dir = 'data';
 
+let scoringCache = null;
+
+async function fetchConfig() {
+    try {
+        const res = await fetch(`${dir}/_config.json`);
+        return await res.json();
+    } catch {
+        return {};
+    }
+}
+
+async function loadScoring() {
+    if (scoringCache) {
+        return scoringCache;
+    }
+
+    let cfg = {};
+    try {
+        cfg = (await fetchConfig()).scoring;
+    } catch {
+        cfg = {};
+    }
+
+    try {
+        scoringCache = normalizeScoring(cfg);
+    } catch (e) {
+        console.error(e.message);
+        scoringCache = normalizeScoring();
+    }
+
+    return scoringCache;
+}
+
 export async function fetchList() {
     const listResult = await fetch(`${dir}/_list.json`);
     try {
         const list = await listResult.json();
-        return await Promise.all(
+
+        const raw = await Promise.all(
             list.map(async (path, rank) => {
                 const levelResult = await fetch(`${dir}/${path}.json`);
                 try {
@@ -18,7 +58,7 @@ export async function fetchList() {
                         {
                             ...level,
                             path,
-                            records: level.records.sort(
+                            records: (level.records || []).sort(
                                 (a, b) => b.percent - a.percent,
                             ),
                         },
@@ -30,6 +70,33 @@ export async function fetchList() {
                 }
             }),
         );
+
+        // Assign each level its position within its phase and the phase size
+        // (size is derived from the levels currently in the phase, not stored)
+        const phaseCounts = {};
+        for (const [level] of raw) {
+            if (!level) continue;
+            const phase = level.phase ?? 1;
+            phaseCounts[phase] = (phaseCounts[phase] || 0) + 1;
+        }
+        const position = {};
+        for (const [level] of raw) {
+            if (!level) continue;
+            const phase = level.phase ?? 1;
+            position[phase] = (position[phase] || 0) + 1;
+            level.phase = phase;
+            level.phaseSize = phaseCounts[phase];
+            level.positionInPhase = position[phase];
+        }
+
+        const scoring = await loadScoring();
+        for (const [level] of raw) {
+            if (level) {
+                level.score = levelScore(level, scoring);
+            }
+        }
+
+        return raw;
     } catch {
         console.error(`Failed to load list.`);
         return null;
@@ -57,6 +124,7 @@ export async function fetchEditors() {
 
 export async function fetchLeaderboard() {
     const [list, flags] = await Promise.all([fetchList(), fetchFlags()]);
+    const { d } = await loadScoring();
 
     const scoreMap = {};
     const errs = [];
@@ -78,8 +146,9 @@ export async function fetchLeaderboard() {
         const { verified } = scoreMap[verifier];
         verified.push({
             rank: rank + 1,
+            phase: level.phase,
             level: level.name,
-            score: manualPointsScore(rank + 1, 100, level.percentToQualify, level.points),
+            score: level.score,
             link: level.verification,
         });
 
@@ -97,8 +166,9 @@ export async function fetchLeaderboard() {
             if (record.percent === 100) {
                 completed.push({
                     rank: rank + 1,
+                    phase: level.phase,
                     level: level.name,
-                    score: manualPointsScore(rank + 1, 100, level.percentToQualify, level.points),
+                    score: level.score,
                     link: record.link,
                 });
                 return;
@@ -106,9 +176,14 @@ export async function fetchLeaderboard() {
 
             progressed.push({
                 rank: rank + 1,
+                phase: level.phase,
                 level: level.name,
                 percent: record.percent,
-                score: manualPointsScore(rank + 1, record.percent, level.percentToQualify, level.points),
+                score: percentPointsScore(
+                    level.score,
+                    record.percent,
+                    level.percentToQualify,
+                ),
                 link: record.link,
             });
         });
@@ -117,14 +192,17 @@ export async function fetchLeaderboard() {
     // Wrap in extra Object containing the user and total score
     const res = Object.entries(scoreMap).map(([user, scores]) => {
         const { verified, completed, progressed } = scores;
-        const total = [verified, completed, progressed]
-            .flat()
-            .reduce((prev, cur) => prev + cur.score, 0);
+        const completions = [...verified, ...completed];
+
+        // Anti-farm: damp repeated completions within the same phase,
+        // partial progress is added flat on top
+        const total =
+            playerTotalScore(completions, d) +
+            progressed.reduce((prev, cur) => prev + cur.score, 0);
 
         // Hardest completed level = lowest rank among verified + completed
-        const allCompleted = [...verified, ...completed];
-        const hardest = allCompleted.length
-            ? allCompleted.reduce((a, b) => a.rank < b.rank ? a : b)
+        const hardest = completions.length
+            ? completions.reduce((a, b) => a.rank < b.rank ? a : b)
             : null;
         if (hardest) hardest.isHardest = true;
 

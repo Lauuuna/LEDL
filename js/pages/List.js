@@ -1,6 +1,7 @@
 import { store } from "../main.js";
-import { embed, countryToFlag } from "../util.js";
+import { embed, countryToFlag, localize } from "../util.js";
 import { fetchList, fetchFlags, fetchEditors } from "../content.js";
+import { phaseLabel, phaseStyles } from "../phases.js";
 
 import Spinner from "../components/Spinner.js";
 import LevelAuthors from "../components/List/LevelAuthors.js";
@@ -35,7 +36,7 @@ export default {
                             <p class="type-label-lg">#{{ i + 1 }}</p>
                         </td>
                         <td class="level" :class="{ 'active': selected == i, 'error': !level }">
-                            <button @click="selected = i">
+                            <button @click="selected = i" :style="activeRowStyle(level, i)">
                                 <span class="type-label-lg">{{ level?.name || \`Error (\${err}.json)\` }}</span>
                             </button>
                         </td>
@@ -46,14 +47,19 @@ export default {
                 <div class="level" v-if="level">
                     <h1>{{ level.name }}</h1>
                     <LevelAuthors :author="level.author" :creators="level.creators" :verifier="level.verifier" :verifierFlag="flags[level.verifier] ? countryToFlag(flags[level.verifier]) : null"></LevelAuthors>
-                    <div v-if="level.tags && level.tags.length" class="tags">
-                        <span v-for="tag in level.tags" class="tag">{{ tag }}</span>
+                    <div class="tags">
+                        <span class="tag tag--phase" :style="phaseTagStyle">{{ phaseLabel }}</span>
+                        <span v-for="tag in (level.tags || [])" class="tag">{{ tag }}</span>
                     </div>
                     <iframe class="video" id="videoframe" :src="video" frameborder="0"></iframe>
                     <ul class="stats">
                         <li>
                             <div class="type-title-sm">Points</div>
-                            <p>{{ level.points }}</p>
+                            <p>{{ localize(level.score) }}</p>
+                        </li>
+                        <li>
+                            <div class="type-title-sm">Phase</div>
+                            <p>{{ level.phase }}</p>
                         </li>
                         <li>
                             <div class="type-title-sm">ID</div>
@@ -159,6 +165,12 @@ export default {
         level() {
             return this.list[this.selected][0];
         },
+        phaseLabel() {
+            return this.level ? phaseLabel(this.level.phase) : '';
+        },
+        phaseTagStyle() {
+            return this.level ? phaseStyles(this.level.phase) : {};
+        },
         video() {
             if (!this.level.showcase) {
                 return embed(this.level.verification);
@@ -198,6 +210,11 @@ export default {
     methods: {
         embed,
         countryToFlag,
+        localize,
+        activeRowStyle(level, i) {
+            if (!level || this.selected !== i) return {};
+            return phaseStyles(level.phase);
+        },
         goToPlayer(user) {
             this.$router.push({ path: '/leaderboard', query: { user } });
         },

@@ -41,6 +41,7 @@
     word-break: normal;
     overflow-wrap: anywhere;
     cursor: pointer;
+    transition: background-color 150ms, color 150ms;
 }
 .page-list .list .level.error button {
     color: var(--color-error);
@@ -84,6 +85,9 @@
     color: var(--color-on-background);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+.page-list .level-container .level .tags .tag--phase {
+    border-color: transparent;
 }
 .page-list .level-container .level .video {
     aspect-ratio: 16/9;

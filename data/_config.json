@@ -5,6 +5,12 @@
         "enabled": false,
         "link": "#"
     },
+    "scoring": {
+        "B1": 714.3,
+        "g": 1.6,
+        "s": 0.4,
+        "d": 0.9
+    },
     "colors": {
         "light": {
             "background": "#ffffff",
