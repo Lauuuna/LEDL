@@ -1,6 +1,6 @@
 import { store } from "../main.js";
 import { embed, countryToFlag, localize } from "../util.js";
-import { fetchList, fetchFlags, fetchEditors } from "../content.js";
+import { fetchList, fetchFlags, fetchEditors, fetchGdlPositions, fetchConfig } from "../content.js";
 import { phaseLabel, phaseStyles } from "../phases.js";
 
 import Spinner from "../components/Spinner.js";
@@ -45,7 +45,13 @@ export default {
             </div>
             <div class="level-container" v-show="!store.mobile || mobileTab === 'level'">
                 <div class="level" v-if="level">
-                    <h1>{{ level.name }}</h1>
+                    <h1>
+                        {{ level.name }}
+                        <span v-if="gdlPlacement && gdlLogo" class="gdl-badge">
+                            ( <img :src="gdlLogo" alt="Global Demon List" class="gdl-logo" />
+                            #{{ gdlPlacement }} )
+                        </span>
+                    </h1>
                     <LevelAuthors :author="level.author" :creators="level.creators" :verifier="level.verifier" :verifierFlag="flags[level.verifier] ? countryToFlag(flags[level.verifier]) : null"></LevelAuthors>
                     <div class="tags">
                         <span class="tag tag--phase" :style="phaseTagStyle">{{ phaseLabel }}</span>
@@ -133,6 +139,8 @@ export default {
         list: [],
         editors: [],
         flags: {},
+        gdlPositions: {},
+        gdlLogo: '',
         loading: true,
         selected: 0,
         errors: [],
@@ -169,11 +177,21 @@ export default {
                     : this.level.verification
             );
         },
+        gdlPlacement() {
+            if (!this.level?.id) return null;
+            return this.gdlPositions[this.level.id] ?? null;
+        },
     },
     async mounted() {
         this.list = await fetchList();
         this.editors = await fetchEditors();
         this.flags = await fetchFlags();
+
+        const config = await fetchConfig();
+        this.gdlLogo = config.globalDemonlist?.logo || '';
+        if (config.globalDemonlist?.enabled) {
+            this.gdlPositions = await fetchGdlPositions(this.list);
+        }
 
         if (!this.list) {
             this.errors = [

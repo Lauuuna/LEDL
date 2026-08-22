@@ -13,7 +13,7 @@ const dir = 'data';
 
 let scoringCache = null;
 
-async function fetchConfig() {
+export async function fetchConfig() {
     try {
         const res = await fetch(`${dir}/_config.json`);
         return await res.json();
@@ -216,4 +216,73 @@ export async function fetchLeaderboard() {
 
     // Sort by total score
     return [res.sort((a, b) => b.total - a.total), errs];
+}
+
+const GDL_CACHE_KEY = 'gdl_positions';
+const GDL_CACHE_TTL = 60 * 60 * 1000;
+const GDL_API_BASE = 'https://api.demonlist.org';
+
+function getGdlCache() {
+    try {
+        const cached = localStorage.getItem(GDL_CACHE_KEY);
+        if (!cached) return null;
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp > GDL_CACHE_TTL) {
+            localStorage.removeItem(GDL_CACHE_KEY);
+            return null;
+        }
+        return data;
+    } catch {
+        return null;
+    }
+}
+
+function setGdlCache(data) {
+    try {
+        localStorage.setItem(GDL_CACHE_KEY, JSON.stringify({
+            data,
+            timestamp: Date.now(),
+        }));
+    } catch {
+    }
+}
+
+async function fetchGdlLevel(ingameId) {
+    const cache = getGdlCache();
+    if (cache && cache[ingameId] !== undefined) {
+        return cache[ingameId];
+    }
+
+    try {
+        const res = await fetch(`${GDL_API_BASE}/level/classic/get?ingame_id=${ingameId}`);
+        if (!res.ok) {
+            if (res.status === 404) return null;
+            throw new Error(`GDL API error: ${res.status}`);
+        }
+        const json = await res.json();
+        if (json.message !== 'success') return null;
+
+        const placement = json.data?.placement ?? null;
+        const newCache = { ...cache, [ingameId]: placement };
+        setGdlCache(newCache);
+        return placement;
+    } catch (e) {
+        console.warn('Failed to fetch Global Demon List position:', e.message);
+        return null;
+    }
+}
+
+export async function fetchGdlPositions(levels) {
+    const config = await fetchConfig();
+    if (!config.globalDemonlist?.enabled) return {};
+
+    const results = {};
+    await Promise.all(
+        levels.map(async ([level]) => {
+            if (!level?.id) return;
+            const placement = await fetchGdlLevel(level.id);
+            if (placement) results[level.id] = placement;
+        })
+    );
+    return results;
 }

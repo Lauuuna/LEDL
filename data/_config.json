@@ -11,6 +11,10 @@
         "s": 0.4,
         "d": 0.9
     },
+    "globalDemonlist": {
+        "enabled": true,
+        "logo": "assets/global.jpg"
+    },
     "colors": {
         "light": {
             "background": "#ffffff",
