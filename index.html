@@ -5,13 +5,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>LEDL</title>
 
-        <link rel="icon" href="list_icon.png" />
+        <link rel="icon" href="list_icon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@500;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@500;700&family=Noto+Color+Emoji&display=swap"
             rel="stylesheet"
         />
+        <style>
+            /* Hide uncompiled Vue template until mount (no mustache flash) */
+            body[v-cloak] > * {
+                display: none !important;
+            }
+            body[v-cloak]::before {
+                content: 'Loading...';
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                font-family: 'Lexend Deca', sans-serif;
+                font-size: 1.25rem;
+                font-weight: 500;
+            }
+        </style>
         <link rel="stylesheet" type="text/css" href="css/reset.css" />
         <link rel="stylesheet" type="text/css" href="css/typography.css" />
         <link rel="stylesheet" type="text/css" href="css/main.css" />
@@ -34,7 +50,7 @@
         <script src="https://unpkg.com/vue-router@4.0.14/dist/vue-router.global.prod.js"></script>
         <script type="module" src="js/main.js"></script>
     </head>
-    <body id="app">
+    <body id="app" v-cloak>
         <header :class="{ dark: store.dark, 'menu-open': store.mobileMenu }">
             <div class="logo">
                 <h2>{{ store.config.name || 'Sample List' }}</h2>

@@ -44,6 +44,117 @@ async function loadScoring() {
     return scoringCache;
 }
 
+/**
+ * Parse a level/record date in DD.MM.YYYY (or D.M.YY/YYYY) format.
+ * Anything else (e.g. "02.XX.25", "XX.XX.XXXX", "XX.07.2025") is
+ * considered unknown -> returns null so it sorts to the end.
+ */
+export function parseLevelDate(str) {
+    if (typeof str !== 'string') return null;
+    const m = str.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/);
+    if (!m) return null;
+    const day = Number(m[1]);
+    const month = Number(m[2]);
+    let year = Number(m[3]);
+    if (m[3].length === 2) year += 2000;
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    const d = new Date(year, month - 1, day);
+    if (
+        d.getFullYear() !== year ||
+        d.getMonth() !== month - 1 ||
+        d.getDate() !== day
+    ) {
+        return null;
+    }
+    return d.getTime();
+}
+
+/**
+ * Sort records from earliest to latest. Records with an
+ * unknown/invalid date go to the end, keeping their relative order.
+ */
+export function sortRecordsByDate(records) {
+    return (records || [])
+        .map((record, index) => ({ record, index }))
+        .sort((a, b) => {
+            const ta = parseLevelDate(a.record.date);
+            const tb = parseLevelDate(b.record.date);
+            if (ta !== null && tb !== null) return ta - tb || a.index - b.index;
+            if (ta !== null) return -1;
+            if (tb !== null) return 1;
+            return a.index - b.index;
+        })
+        .map(({ record }) => record);
+}
+
+/**
+ * The verifier is whoever completed the level first. If a 100% record
+ * is dated strictly earlier than `verifiedDate` (or `verifiedDate` is
+ * unknown while the record's date is known), that record author becomes
+ * the verifier and the previous verifier is demoted to a regular record.
+ * Ties keep the original verifier. Records are sorted earliest-first.
+ */
+export function normalizeLevelDates(level) {
+    const records = [...(level.records || [])];
+    const verifierEntry = {
+        user: level.verifier,
+        link: level.verification,
+        percent: 100,
+        date: level.verifiedDate,
+    };
+
+    const fullClears = [
+        verifierEntry,
+        ...records.filter((r) => Number(r.percent) === 100),
+    ];
+
+    let best = null;
+    let bestTime = null;
+    for (const candidate of fullClears) {
+        const t = parseLevelDate(candidate.date);
+        if (t === null) continue;
+        if (bestTime === null || t < bestTime) {
+            best = candidate;
+            bestTime = t;
+        }
+    }
+
+    // No known dates at all, or the original verifier is already earliest.
+    if (!best || best === verifierEntry) {
+        return { ...level, records: sortRecordsByDate(records) };
+    }
+
+    const next = { ...level };
+    next.verifier = best.user;
+    next.verification = best.link;
+    next.verifiedDate = best.date;
+
+    const rest = records.filter((r) => r !== best);
+    const oldVerifier = typeof level.verifier === 'string' ? level.verifier : '';
+    const samePerson =
+        typeof best.user === 'string' &&
+        oldVerifier &&
+        best.user.toLowerCase() === oldVerifier.toLowerCase();
+    const alreadyThere =
+        oldVerifier &&
+        rest.some(
+            (r) =>
+                typeof r.user === 'string' &&
+                r.user.toLowerCase() === oldVerifier.toLowerCase() &&
+                Number(r.percent) === 100,
+        );
+    if (!samePerson && !alreadyThere && oldVerifier) {
+        rest.push({
+            user: level.verifier,
+            link: level.verification,
+            percent: 100,
+            date: level.verifiedDate,
+        });
+    }
+    next.records = sortRecordsByDate(rest);
+    return next;
+}
+
 export async function fetchList() {
     const listResult = await fetch(`${dir}/_list.json`);
     try {
@@ -54,13 +165,11 @@ export async function fetchList() {
                 const levelResult = await fetch(`${dir}/${path}.json`);
                 try {
                     const level = await levelResult.json();
+                    const normalized = normalizeLevelDates(level);
                     return [
                         {
-                            ...level,
+                            ...normalized,
                             path,
-                            records: (level.records || []).sort(
-                                (a, b) => b.percent - a.percent,
-                            ),
                         },
                         null,
                     ];
@@ -123,11 +232,25 @@ export async function fetchEditors() {
 }
 
 export async function fetchLeaderboard() {
-    const [list, flags] = await Promise.all([fetchList(), fetchFlags()]);
+    const [list, flags, config] = await Promise.all([
+        fetchList(),
+        fetchFlags(),
+        fetchConfig(),
+    ]);
     const { d } = await loadScoring();
 
     const scoreMap = {};
     const errs = [];
+    if (!list) {
+        return [[], ['_list']];
+    }
+
+    // GDL placements by in-game level id (cached for 1h in localStorage).
+    // Used for the AVG Hardest stat; missing/failed lookups are skipped.
+    let gdlPositions = {};
+    if (config.globalDemonlist?.enabled) {
+        gdlPositions = await fetchGdlPositions(list);
+    }
     list.forEach(([level, err], rank) => {
         if (err) {
             errs.push(err);
@@ -150,6 +273,7 @@ export async function fetchLeaderboard() {
             level: level.name,
             score: level.score,
             link: level.verification,
+            id: level.id,
         });
 
         // Records
@@ -163,13 +287,14 @@ export async function fetchLeaderboard() {
                 progressed: [],
             };
             const { completed, progressed } = scoreMap[user];
-            if (record.percent === 100) {
+            if (Number(record.percent) === 100) {
                 completed.push({
                     rank: rank + 1,
                     phase: level.phase,
                     level: level.name,
                     score: level.score,
                     link: record.link,
+                    id: level.id,
                 });
                 return;
             }
@@ -206,11 +331,36 @@ export async function fetchLeaderboard() {
             : null;
         if (hardest) hardest.isHardest = true;
 
+        // All Records = every 100% completion (verified + completed),
+        // hardest-first. Verified stays as-is.
+        const allRecords = [...verified, ...completed].sort(
+            (a, b) => a.rank - b.rank,
+        );
+
+        // AVG Hardest = mean Global Demonlist placement across the player's
+        // 10 hardest completions (lowest GDL placements). Levels without a
+        // known GDL placement are skipped; null when the player has no
+        // GDL-ranked completions. With fewer than 10, averages over all
+        // available ones.
+        const placements = completions
+            .map((c) => gdlPositions[c.id])
+            .filter((p) => typeof p === 'number' && Number.isFinite(p))
+            .sort((a, b) => a - b)
+            .slice(0, 10);
+        const avgHardest = placements.length
+            ? round(
+                  placements.reduce((prev, cur) => prev + cur, 0) /
+                      placements.length,
+              )
+            : null;
+
         return {
             user,
             total: round(total),
             flag: flags[user] || null,
             ...scores,
+            allRecords,
+            avgHardest,
         };
     });
 

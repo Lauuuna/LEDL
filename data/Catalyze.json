@@ -10,11 +10,17 @@
     "phase": 5,
     "verifiedDate": "XX.07.2025",
     "records": [
-                {
+        {
             "user": "Tami",
             "link": "https://www.youtube.com/watch?v=NHM0shbQSeQ",
             "percent": 100,
             "date": "XX.XX.XXXX"
+        },
+        {
+            "user": "Rewty",
+            "link": "https://www.youtube.com/watch?v=ls6rVVNKLjI",
+            "percent": 100,
+            "date": "30.01.2026"
         }
     ]
 }

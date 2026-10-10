@@ -110,3 +110,16 @@ input[type="checkbox"] {
     cursor: pointer;
     margin: 0;
 }
+
+/* Regional-indicator flags (e.g. 🇷🇺). Lexend Deca has no flag glyphs,
+   and Windows' Segoe UI Emoji shows country codes instead of flags,
+   so force a color-emoji webfont for consistent rendering everywhere. */
+.flag {
+    font-family: "Noto Color Emoji", "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Android Emoji",
+        "EmojiSymbols", sans-serif;
+    font-weight: 400;
+    line-height: 1;
+    vertical-align: middle;
+    letter-spacing: 0;
+}

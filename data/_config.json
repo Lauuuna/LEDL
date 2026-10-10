@@ -13,7 +13,7 @@
     },
     "globalDemonlist": {
         "enabled": true,
-        "logo": "assets/global.jpg"
+        "logo": "assets/global.svg"
     },
     "colors": {
         "light": {

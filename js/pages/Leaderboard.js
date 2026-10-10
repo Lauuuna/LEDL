@@ -1,5 +1,5 @@
 import { fetchLeaderboard } from '../content.js';
-import { localize, countryToFlag } from '../util.js';
+import { localize, countryToFlag, formatGdlPlacement } from '../util.js';
 import { store } from '../main.js';
 
 import Spinner from '../components/Spinner.js';
@@ -42,16 +42,17 @@ export default {
                             </td>
                             <td class="user" :class="{ 'active': selected == i }">
                                 <button @click="selected = i">
-                                    <span class="type-label-lg">{{ ientry.user }} <template v-if="ientry.flag">({{ countryToFlag(ientry.flag) }})</template></span>
+                                    <span class="type-label-lg">{{ ientry.user }} <template v-if="ientry.flag">(<span class="flag">{{ countryToFlag(ientry.flag) }}</span>)</template></span>
                                 </button>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div class="player-container" v-show="!store.mobile || mobileTab === 'player'">
-                    <div class="player">
-                        <h1>#{{ selected + 1 }} {{ entry.user }} <template v-if="entry.flag">({{ countryToFlag(entry.flag) }})</template></h1>
+                    <div class="player" v-if="entry">
+                        <h1>#{{ selected + 1 }} {{ entry.user }} <template v-if="entry.flag">(<span class="flag">{{ countryToFlag(entry.flag) }}</span>)</template></h1>
                         <h3>{{ entry.total }} points</h3>
+                        <h3>AVG Hardest: {{ formatGdlPlacement(entry.avgHardest) }}</h3>
                         <h2 v-if="entry.verified.length > 0">Verified ({{ entry.verified.length}})</h2>
                         <table class="table" v-if="entry.verified.length > 0">
                             <tr v-for="score in entry.verified" :class="{ hardest: score.isHardest }">
@@ -66,9 +67,9 @@ export default {
                                 </td>
                             </tr>
                         </table>
-                        <h2 v-if="entry.completed.length > 0">Completed ({{ entry.completed.length }})</h2>
-                        <table class="table" v-if="entry.completed.length > 0">
-                            <tr v-for="score in entry.completed" :class="{ hardest: score.isHardest }">
+                        <h2 v-if="entry.allRecords.length > 0">All Records ({{ entry.allRecords.length }})</h2>
+                        <table class="table" v-if="entry.allRecords.length > 0">
+                            <tr v-for="score in entry.allRecords" :class="{ hardest: score.isHardest }">
                                 <td class="rank">
                                     <p>#{{ score.rank }}</p>
                                 </td>
@@ -95,13 +96,16 @@ export default {
                             </tr>
                         </table>
                     </div>
+                    <div class="player" v-else>
+                        <p>(ノಠ益ಠ)ノ彡┻━┻</p>
+                    </div>
                 </div>
             </div>
         </main>
     `,
     computed: {
         entry() {
-            return this.leaderboard[this.selected];
+            return this.leaderboard[this.selected] ?? null;
         },
     },
     async mounted() {
@@ -129,5 +133,6 @@ export default {
     methods: {
         localize,
         countryToFlag,
+        formatGdlPlacement,
     },
 };

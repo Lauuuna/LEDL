@@ -13,6 +13,11 @@ export function localize(num) {
     return num.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 
+export function formatGdlPlacement(num) {
+    if (num == null || !Number.isFinite(num)) return '—';
+    return '#' + num.toLocaleString(undefined, { maximumFractionDigits: 1, useGrouping: false });
+}
+
 export function getThumbnailFromId(id) {
     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }

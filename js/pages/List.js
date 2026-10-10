@@ -80,7 +80,7 @@ export default {
                                 <p>{{ record.percent }}%</p>
                             </td>
                             <td class="user">
-                                <span class="type-label-lg username" @click="goToPlayer(record.user)">{{ record.user }} <template v-if="flags[record.user]">({{ countryToFlag(flags[record.user]) }})</template></span>
+                                <span class="type-label-lg username" @click="goToPlayer(record.user)">{{ record.user }} <template v-if="flags[record.user]">(<span class="flag">{{ countryToFlag(flags[record.user]) }}</span>)</template></span>
                             </td>
                             <td class="mobile">
                                 <img v-if="record.mobile" :src="\`assets/phone-landscape\${store.dark ? '-dark' : ''}.svg\`" alt="Mobile">
@@ -158,7 +158,7 @@ export default {
     },
     computed: {
         level() {
-            return this.list[this.selected][0];
+            return (this.list ?? [])[this.selected]?.[0] ?? null;
         },
         phaseLabel() {
             return this.level ? phaseLabel(this.level.phase) : '';
@@ -189,7 +189,7 @@ export default {
 
         const config = await fetchConfig();
         this.gdlLogo = config.globalDemonlist?.logo || '';
-        if (config.globalDemonlist?.enabled) {
+        if (config.globalDemonlist?.enabled && this.list) {
             this.gdlPositions = await fetchGdlPositions(this.list);
         }
 
